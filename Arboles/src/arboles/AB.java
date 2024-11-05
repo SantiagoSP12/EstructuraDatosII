@@ -60,8 +60,6 @@ public class AB <T extends Comparable<T>> extends AMV<T>{
 
     private void dividirNodo(NodoMVias<T> nodoAux, Stack<NodoMVias<T>> pilaDeAncestros) {
         T datoDelMedio=nodoAux.getDato((orden-1)/2);
-        System.out.println(this.orden);
-        System.out.println(datoDelMedio);
         NodoMVias nodoIzquierdo=new NodoMVias<>(this.orden);
         NodoMVias nodoDerecho=new NodoMVias<>(this.orden);
         int division=(orden-1)/2;
@@ -78,7 +76,6 @@ public class AB <T extends Comparable<T>> extends AMV<T>{
         }
         nodoDerecho.setHijo(contador,nodoAux.getHijo(orden));
         if(!pilaDeAncestros.isEmpty()){
-            System.out.println(datoDelMedio);
             NodoMVias<T> nodo=pilaDeAncestros.pop();
             this.insertarDatoOrdenadoEnNodo(nodo,datoDelMedio);
             int posicion=this.buscarPosicionDeDatoEnNodo(nodo,datoDelMedio);
@@ -129,26 +126,93 @@ public class AB <T extends Comparable<T>> extends AMV<T>{
             NodoMVias<T> nodoDelPredecesor=buscarNodoDelPredecesor(
                     nodoDelDatoAEliminar.getHijo(posicionDeDatoAEliminar),pilaDeAncestros);
             int posicionDelReempazo=nodoDelPredecesor.nroDeDatosNoVacios()-1;
-            T datoDeReemplazo=nodoDelPredecesor.getDato(posicionDelReempazo);
+            T datoDeReemplazo=nodoDelPredecesor.getDato(posicionDelReempazo);;
             nodoDelPredecesor.setDato(posicionDelReempazo,(T)NodoMVias.datoVacio());
             nodoDelDatoAEliminar.setDato(posicionDeDatoAEliminar,datoDeReemplazo);
+
             if(nodoDelPredecesor.nroDeDatosNoVacios()<this.nroMinimoDeDatos){
-                //prestarseOFusionar(nodoDelPredecesor,pilaDeAncestros);
+                prestarseOFusionar(nodoDelPredecesor,pilaDeAncestros);
             }
         }
 
     }
 
-    private void prestarseOFusionar(NodoMVias nodoDelDatoAEliminar, Stack<NodoMVias<T>> pilaDeAncestros) {
+    private void prestarseOFusionar(NodoMVias<T> nodoDelDatoAEliminar, Stack<NodoMVias<T>> pilaDeAncestros) {
+        if(!pilaDeAncestros.isEmpty()){
+            NodoMVias<T> padre = pilaDeAncestros.pop();
+            int posicionRelativa = getPosicionDeHijo(padre,nodoDelDatoAEliminar);
+            if (!NodoMVias.esNodoVacio(padre.getHijo(posicionRelativa+1))){
+                if(padre.getHijo(posicionRelativa+1).nroDeDatosNoVacios()>nroMinimoDeDatos){
+                    prestarDerecho(nodoDelDatoAEliminar, padre, posicionRelativa);
+                }else if(posicionRelativa>0 && padre.getHijo(posicionRelativa-1).nroDeDatosNoVacios()>nroMinimoDeDatos){
+                    prestarIzquierdo(nodoDelDatoAEliminar, padre, posicionRelativa);
+                }else{
+                    fusionar(padre.getHijo(posicionRelativa+1),padre,posicionRelativa);
+                    if(padre.nroDeDatosNoVacios()<nroMinimoDeDatos){
+                        prestarseOFusionar(padre,pilaDeAncestros);
+                    }
+                }
+            } else if (posicionRelativa>0) {
+                if(padre.getHijo(posicionRelativa-1).nroDeDatosNoVacios()>nroMinimoDeDatos){
+                    prestarIzquierdo(nodoDelDatoAEliminar, padre, posicionRelativa);
+                }else{
+                    fusionar(padre.getHijo(posicionRelativa),padre,posicionRelativa-1);
+                    if(padre.nroDeDatosNoVacios()<nroMinimoDeDatos){
+                        prestarseOFusionar(padre,pilaDeAncestros);
+                    }
+                }
+            }
+        }else{
+            raiz=nodoDelDatoAEliminar.getHijo(0);
+        }
     }
 
-    private void prestarse(NodoMVias nodoDelDatoAEliminar, Stack<NodoMVias<T>> pilaDeAncestros){
-
+    private int getPosicionDeHijo(NodoMVias<T> padre, NodoMVias<T> hijo){
+        int i=0;
+        while(i<padre.nroDeDatosNoVacios()){
+            if(padre.getHijo(i)==hijo){
+                return i;
+            }
+            i++;
+        }
+        return i;
     }
 
-    private void fusionar(NodoMVias nodoDelDatoAEliminar, Stack<NodoMVias<T>> pilaDeAncestros){
+    private void fusionar(NodoMVias<T> nodoDerecho, NodoMVias<T> padre, int posicionHermanoIzquierdo) {
+        T datoPadre=padre.getDato(posicionHermanoIzquierdo);
+        NodoMVias<T> nodoIzquierdo=padre.getHijo(posicionHermanoIzquierdo);
+        int i=0;
+        while(i<nodoIzquierdo.nroDeDatosNoVacios()){
+            insertarDatoOrdenadoEnNodo(nodoDerecho,nodoIzquierdo.getDato(i));
+            nodoDerecho.setHijo(i,nodoIzquierdo.getHijo(i));
+            i++;
+        }
 
+        insertarDatoOrdenadoEnNodo(nodoDerecho,datoPadre);
+        nodoDerecho.setHijo(i,nodoIzquierdo.getHijo(i));
+        eliminarElDatoDelNodo(padre,posicionHermanoIzquierdo);
     }
+
+    private void prestarIzquierdo(NodoMVias<T> nodoDelDatoAEliminar, NodoMVias<T> padre, int posicionRelativa) {
+        NodoMVias<T> hermano = padre.getHijo(posicionRelativa - 1);
+        T datoDelHermano = hermano.getDato(hermano.nroDeDatosNoVacios() - 1);
+        eliminarElDatoDelNodo(hermano, hermano.nroDeDatosNoVacios() - 1);
+        T datoDelPadre = padre.getDato(posicionRelativa - 1);
+        padre.setDato(posicionRelativa - 1, datoDelHermano);
+        insertarDatoOrdenadoEnNodo(nodoDelDatoAEliminar, datoDelPadre);
+    }
+
+    private void prestarDerecho(NodoMVias<T> nodoDelDatoAEliminar, NodoMVias<T> padre, int posicionRelativa) {
+        NodoMVias<T> hermano= padre.getHijo(posicionRelativa +1);
+        T datoDelHermano=hermano.getDato(0);
+        NodoMVias<T> hijoAPerder=hermano.getHijo(0);
+        eliminarElDatoDelNodo(hermano,0);
+        T datoDelPadre= padre.getDato(posicionRelativa);
+        padre.setDato(posicionRelativa,datoDelHermano);
+        insertarDatoOrdenadoEnNodo(nodoDelDatoAEliminar,datoDelPadre);
+        nodoDelDatoAEliminar.setHijo(nodoDelDatoAEliminar.nroDeDatosNoVacios(),hijoAPerder);
+    }
+
 
     private NodoMVias<T> buscarNodoDelPredecesor(NodoMVias hijo,Stack<NodoMVias<T>> pilaDeAncestros) {
         if(hijo.esHoja()){

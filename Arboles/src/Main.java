@@ -4,58 +4,43 @@ import arboles.Excepciones.ExcepcionOrdenInvalido;
 public class Main {
 
     public static void main(String[] args) throws ExcepcionOrdenInvalido {
-        AMV<Integer> arbol=new AMV<>();
+        AMV<Integer> arbol=new AB<>(4);
         arbol.insertar(10);
-        arbol.insertar(20);//did not
-        System.out.println(arbol.toString());
+        arbol.insertar(20);
         arbol.insertar(15);
-        System.out.println(arbol.toString());
         arbol.insertar(1);
-        System.out.println(arbol.toString());
         arbol.insertar(22);
-        System.out.println(arbol.toString());
-        arbol.insertar(25);
-        System.out.println(arbol.toString());
-        arbol.insertar(40);
-        System.out.println(arbol.toString());
-        arbol.insertar(32);
-        System.out.println(arbol.toString());
-        arbol.insertar(90);
-        System.out.println(arbol.toString());
-        arbol.insertar(12);
-        System.out.println(arbol.toString());/*
-        arbol.insertar(2);
-        System.out.println(arbol.toString());
-        arbol.insertar(3);
-        System.out.println(arbol.toString());
-        arbol.insertar(95);
-        System.out.println(arbol.toString());
-        arbol.insertar(50);
-        System.out.println(arbol.toString());
-        arbol.insertar(6);
-        System.out.println(arbol.toString());/*
-        arbol.insertar(77);
-        System.out.println(arbol.toString());
-        arbol.insertar(58);
-        System.out.println(arbol.toString());
-        arbol.insertar(88);
-        System.out.println(arbol.toString());/*
-        arbol.insertar(19);
-        System.out.println(arbol.toString());
-        arbol.insertar(92);
-        System.out.println(arbol.toString());
-        arbol.insertar(49);
-        System.out.println(arbol.toString());
-        arbol.insertar(33);
-        System.out.println(arbol.toString());
-        arbol.insertar(65);
-        System.out.println(arbol.toString());
-        arbol.insertar(74);
-        System.out.println(arbol.toString());
-        arbol.insertar(89);
-        System.out.println(arbol.toString());
-        arbol.insertar(98);
-        System.out.println(arbol.toString());*/
 
+        arbol.insertar(25);
+        arbol.insertar(40);
+        arbol.insertar(32);
+        arbol.insertar(90);
+        arbol.insertar(12);
+        arbol.insertar(2);
+        arbol.insertar(3);
+        arbol.insertar(95);
+        arbol.insertar(50);
+        arbol.insertar(6);
+        arbol.insertar(77);
+        arbol.insertar(58);
+        arbol.insertar(88);
+        arbol.insertar(19);
+        arbol.insertar(92);
+        arbol.insertar(49);
+        arbol.insertar(33);
+        arbol.insertar(65);
+        arbol.insertar(74);
+        arbol.insertar(89);
+        arbol.insertar(98);
+
+        arbol.eliminar(2);
+        arbol.eliminar(25);
+        arbol.eliminar(32);
+        arbol.eliminar(20);
+        arbol.eliminar(19);
+        arbol.eliminar(15);
+        System.out.println(arbol.toString());
+
+        System.out.println(arbol.recorridoEnInOrden().toString());
     }
 }

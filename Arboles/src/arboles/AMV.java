@@ -69,25 +69,24 @@ public class AMV <T extends Comparable<T>>
 
     protected void insertarDatoOrdenadoEnNodo(NodoMVias<T> nodoAux, T datoAInsertar) {
         T datoACambiar=datoAInsertar;
-        NodoMVias<T> nodoIzquierdo=NodoMVias.nodoVacio();
-        NodoMVias<T> nodoDerecho=NodoMVias.nodoVacio();
         int i=0;
-
+        NodoMVias<T> nodoASalvar;
+        NodoMVias<T> nodoSalvado=nodoAux.getHijo(i);
         while(i<nodoAux.nroDeDatosNoVacios()){
             if(datoACambiar.compareTo(nodoAux.getDato(i))<0){
-                nodoDerecho=nodoAux.getHijo(i);
+                nodoASalvar=nodoAux.getHijo(i+1);
                 T datoSalvar=nodoAux.getDato(i);
-                nodoAux.setHijo(i,nodoIzquierdo);
-                nodoIzquierdo=nodoDerecho;
+                nodoAux.setHijo(i+1,nodoSalvado);
+                nodoSalvado=nodoASalvar;
                 nodoAux.setDato(i,datoACambiar);
                 datoACambiar=datoSalvar;
+            }else{
+                nodoSalvado=nodoAux.getHijo(i+1);
             }
             i++;
         }
-        nodoDerecho=nodoAux.getHijo(i);
         nodoAux.setDato(i,datoACambiar);
-        nodoAux.setHijo(i,nodoIzquierdo);
-        nodoAux.setHijo(i++,nodoDerecho);
+        nodoAux.setHijo(i+1,nodoSalvado);
     }
 
     protected int buscarPosicionParaBajar(NodoMVias<T> nodoAux, T datoAInsertar) {
@@ -175,7 +174,15 @@ public class AMV <T extends Comparable<T>>
     }
 
     protected void eliminarElDatoDelNodo(NodoMVias<T> nodoActual, int posicionDeDatoEnNodo) {
-
+        int i=posicionDeDatoEnNodo;
+        while(i<nodoActual.nroDeDatosNoVacios()-1){
+            nodoActual.setDato(i,nodoActual.getDato(i+1));
+            nodoActual.setHijo(i,nodoActual.getHijo(i+1));
+            i++;
+        }
+        nodoActual.setDato(i,(T)NodoMVias.datoVacio());
+        nodoActual.setHijo(i,nodoActual.getHijo(i+1));
+        nodoActual.setHijo(i+1,NodoMVias.nodoVacio());
     }
 
     @Override

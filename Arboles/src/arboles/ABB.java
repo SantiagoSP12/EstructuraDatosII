@@ -45,8 +45,7 @@ public class ABB<T extends Comparable<T>>
         }
     }
 
-    @Override
-    public void eliminar(T datoAEliminar) {
+    public void eliminarI(T datoAEliminar) {
         if(datoAEliminar==null){
             throw new RuntimeException("Dato no puede ser nulo");
         }
@@ -54,11 +53,10 @@ public class ABB<T extends Comparable<T>>
             NodoBinario<T> nodoAux=this.raiz;
             NodoBinario<T> nodoAnterior=NodoBinario.nodoVacio();
             do{
+                nodoAnterior=nodoAux;
                 if(datoAEliminar.compareTo(nodoAux.getDato())<0){
-                    nodoAnterior=nodoAux;
                     nodoAux=nodoAux.getHijoIzquierdo();
                 }else if(datoAEliminar.compareTo(nodoAux.getDato())>0){
-                    nodoAnterior=nodoAux;
                     nodoAux=nodoAux.getHijoDerecho();
                 }
             }while(datoAEliminar.compareTo(nodoAux.getDato())!=0);
@@ -66,7 +64,8 @@ public class ABB<T extends Comparable<T>>
         }
     }
 
-    public void eliminarR(T datoAEliminar){
+    @Override
+    public void eliminar(T datoAEliminar){
         this.raiz=eliminarR(this.raiz,datoAEliminar);
     }
 
@@ -379,9 +378,9 @@ public class ABB<T extends Comparable<T>>
             return representacion + prefijo + (tipo.equals("I") ? "├── " : (tipo.equals("D") ? "└── " : "")) + "null\n";
         }
 
-        representacion += prefijo + (tipo.equals("R") ? "" : (tipo.equals("I") ? " ├── " : " └── ")) + nodo.getDato() + " (" + tipo + ")\n";
+        representacion += prefijo + (tipo.equals("R") ? "" : (tipo.equals("D") ? "└── " : "├── ")) + "(" + tipo + ") " + nodo.getDato() + "\n";
 
-        String nuevoPrefijo = prefijo + (tipo.equals("I") ? "│   " : "    ");
+        String nuevoPrefijo = prefijo + (tipo.equals("R") ? " " : (tipo.equals("I") ? "│    " : "     "));
         representacion = crearRepresentacion(nodo.getHijoIzquierdo(), representacion, nuevoPrefijo, "I");
         representacion = crearRepresentacion(nodo.getHijoDerecho(), representacion, nuevoPrefijo, "D");
 
