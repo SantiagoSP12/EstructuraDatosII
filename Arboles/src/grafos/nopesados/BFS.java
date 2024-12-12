@@ -16,10 +16,10 @@ public class BFS<G extends Comparable<G>>{
         elGrafo = unGrafo;
         controlMarcados=new ControlMarcados(elGrafo.cantidadDeVertices());
         recorrido=new ArrayList<>();
-        ejecurarBFS(verticeDePartida);
+        ejecutarBFS(verticeDePartida);
     }
 
-    private void ejecurarBFS(G verticeEnTurno) {
+    public void ejecutarBFS(G verticeEnTurno) {
         elGrafo.validarVertice(verticeEnTurno);
         Queue<G> colaDeVertices=new LinkedList<>();
         colaDeVertices.offer(verticeEnTurno);
@@ -29,7 +29,7 @@ public class BFS<G extends Comparable<G>>{
             recorrido.add(vertice);
             Iterable<G> adyacentesDelVertice= elGrafo.getAdyacentesDelVertice(vertice);
             for(G adyacente:adyacentesDelVertice){
-                int nroDelAdyacente=elGrafo.nroVertice(vertice);
+                int nroDelAdyacente=elGrafo.nroVertice(adyacente);
                 if(!controlMarcados.estaMarcadoVertice(nroDelAdyacente)){
                     colaDeVertices.offer(adyacente);
                     controlMarcados.marcar(nroDelAdyacente);
@@ -48,7 +48,7 @@ public class BFS<G extends Comparable<G>>{
         return controlMarcados.estaMarcadoVertice(nroVertice);
     }
 
-    public boolean seVisitoTodos(){
+    public boolean seVisitoTodosLosVertices(){
         return controlMarcados.estanTodosMarcados();
     }
 

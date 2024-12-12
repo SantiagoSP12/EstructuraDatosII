@@ -100,7 +100,7 @@ public class AMV <T extends Comparable<T>>
 
     protected int buscarPosicionDeDatoEnNodo(NodoMVias<T> nodoAux, T datoAInsertar) {
         for(int i = 0; i<nodoAux.nroDeDatosNoVacios(); i++){
-            if(nodoAux.getDato(i)==datoAInsertar){
+            if(nodoAux.getDato(i).compareTo(datoAInsertar)==0){
                 return i;
             }
         }
@@ -193,8 +193,9 @@ public class AMV <T extends Comparable<T>>
         NodoMVias<T> nodoAux = this.raiz;
         while(!NodoMVias.esNodoVacio(nodoAux)){
             boolean cambioElNodo= false;
-            for(int i = 0; i<nodoAux.nroDeDatosNoVacios()&&!cambioElNodo; i++) {
+            for(int i = 0; !cambioElNodo&&i<nodoAux.nroDeDatosNoVacios(); i++) {
                 T datoDelNodoAux = nodoAux.getDato(i);
+                System.out.println(i);
                 if(dato.compareTo(datoDelNodoAux)==0) {
                     return datoDelNodoAux;
                 }
