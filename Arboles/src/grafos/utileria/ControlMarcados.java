@@ -35,4 +35,9 @@ public class ControlMarcados {
         return !listaDeMarcados.contains(Boolean.FALSE);
     }
 
+    @Override
+    public String toString(){
+        return this.listaDeMarcados.toString();
+    }
+
 }

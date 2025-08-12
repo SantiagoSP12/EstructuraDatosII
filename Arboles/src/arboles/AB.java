@@ -4,7 +4,6 @@ import arboles.Excepciones.ExcepcionDatoNoExiste;
 import arboles.Excepciones.ExcepcionDatoYaExiste;
 import arboles.Excepciones.ExcepcionOrdenInvalido;
 
-import javax.swing.plaf.synth.SynthSpinnerUI;
 import java.util.Stack;
 
 public class AB <T extends Comparable<T>> extends AMV<T>{
@@ -163,7 +162,9 @@ public class AB <T extends Comparable<T>> extends AMV<T>{
                 }
             }
         }else{
-            raiz=nodoDelDatoAEliminar.getHijo(0);
+            if(raiz.nroDeDatosNoVacios()<1) {
+                raiz = nodoDelDatoAEliminar.getHijo(0);
+            }
         }
     }
 
@@ -196,10 +197,12 @@ public class AB <T extends Comparable<T>> extends AMV<T>{
     private void prestarIzquierdo(NodoMVias<T> nodoDelDatoAEliminar, NodoMVias<T> padre, int posicionRelativa) {
         NodoMVias<T> hermano = padre.getHijo(posicionRelativa - 1);
         T datoDelHermano = hermano.getDato(hermano.nroDeDatosNoVacios() - 1);
+        NodoMVias<T> hijoAPerder =hermano.getHijo(hermano.nroDeDatosNoVacios());
         eliminarElDatoDelNodo(hermano, hermano.nroDeDatosNoVacios() - 1);
         T datoDelPadre = padre.getDato(posicionRelativa - 1);
         padre.setDato(posicionRelativa - 1, datoDelHermano);
         insertarDatoOrdenadoEnNodo(nodoDelDatoAEliminar, datoDelPadre);
+        nodoDelDatoAEliminar.setHijo(0,hijoAPerder);
     }
 
     private void prestarDerecho(NodoMVias<T> nodoDelDatoAEliminar, NodoMVias<T> padre, int posicionRelativa) {
@@ -220,6 +223,10 @@ public class AB <T extends Comparable<T>> extends AMV<T>{
         }
         pilaDeAncestros.push(hijo);
         return buscarNodoDelPredecesor(hijo.getHijo(hijo.nroDeDatosNoVacios()),pilaDeAncestros);
+    }
+
+    public void testRun(NodoMVias<T> raizNueva){
+        this.raiz=raizNueva;
     }
 
 }

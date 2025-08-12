@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class GrafoM<G extends Comparable<G>>{
+public class GrafoM<G extends Comparable<G>> extends Grafo<G>{
     protected List<G> listaDeVertices;
     protected List<List<Boolean>> matrizDeAdyacencias;
     public static final int NRO_DE_VERTICE_INVALIDO = -1;
@@ -24,6 +24,24 @@ public class GrafoM<G extends Comparable<G>>{
             insertarVertice(vertice);
         }
     }
+
+    public GrafoM(Grafo<G> unGrafo){
+        listaDeVertices=new ArrayList<>();
+        matrizDeAdyacencias =new ArrayList<>();
+        Iterable<G> vertices=unGrafo.getVertices();
+        for(G vertice:vertices){
+            insertarVertice(vertice);
+        }
+        for(G vertice:vertices){
+            Iterable<G> adyacentes=unGrafo.getAdyacentesDelVertice(vertice);
+            for(G adyacente: adyacentes){
+                int nroOrigen=nroVertice(vertice);
+                int nroAdyacente=nroVertice(adyacente);
+                matrizDeAdyacencias.get(nroOrigen).set(nroAdyacente,Boolean.TRUE);
+            }
+        }
+    }
+
 
     public int nroVertice(G vertice){
         for(int i=0;i<listaDeVertices.size();i++){
@@ -43,15 +61,17 @@ public class GrafoM<G extends Comparable<G>>{
     }
 
     public void insertarVertice(G vertice) {
-        validarVertice(vertice);
-        listaDeVertices.add(vertice);
-        for(List<Boolean> filaDeAdyacencias:matrizDeAdyacencias){
-            filaDeAdyacencias.add(Boolean.FALSE);
-        }
-        matrizDeAdyacencias.add(new ArrayList<>());
-        List<Boolean> nuevaFila=matrizDeAdyacencias.getLast();
-        for(int i=0; i<listaDeVertices.size();i++){
-            nuevaFila.add(Boolean.FALSE);
+        int nroDelVertice=nroVertice(vertice);
+        if(nroDelVertice==NRO_DE_VERTICE_INVALIDO) {
+            listaDeVertices.add(vertice);
+            for (List<Boolean> filaDeAdyacencias : matrizDeAdyacencias) {
+                filaDeAdyacencias.add(Boolean.FALSE);
+            }
+            matrizDeAdyacencias.add(new ArrayList<>());
+            List<Boolean> nuevaFila = matrizDeAdyacencias.getLast();
+            for (int i = 0; i < listaDeVertices.size(); i++) {
+                nuevaFila.add(Boolean.FALSE);
+            }
         }
     }
 
@@ -62,7 +82,7 @@ public class GrafoM<G extends Comparable<G>>{
     public int cantidadDeAristas(){
         int contador=0;
         for(int i=0;i<matrizDeAdyacencias.size();i++){
-            for(int j=i;i<matrizDeAdyacencias.size();j++){
+            for(int j=i;j<matrizDeAdyacencias.size();j++){
                 if(matrizDeAdyacencias.get(i).get(j)){
                     contador++;
                 }
@@ -109,7 +129,15 @@ public class GrafoM<G extends Comparable<G>>{
     }
 
     public void eliminarArista(G verticeOrigen, G verticeDestino) throws ExcepcionAristaNoExiste {
-
+        if(!existeAdyacencia(verticeOrigen,verticeDestino)){
+            throw new ExcepcionAristaNoExiste();
+        }
+        int nroVerticeOrigen=nroVertice(verticeOrigen);
+        int nroVerticeDestino=nroVertice(verticeDestino);
+        matrizDeAdyacencias.get(nroVerticeOrigen).set(nroVerticeDestino,Boolean.FALSE);
+        if(nroVerticeOrigen!=nroVerticeDestino){
+            matrizDeAdyacencias.get(nroVerticeDestino).set(nroVerticeOrigen,Boolean.FALSE);
+        }
     }
 
     public void eliminarVertice(G vertice){
@@ -131,6 +159,31 @@ public class GrafoM<G extends Comparable<G>>{
             if(adyacente) grado++;
         }
         return grado;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb=new StringBuilder();
+        sb.append("Grafo no pesado{\n   ");
+        for(G vertice:listaDeVertices){
+            sb.append(vertice+"  ");
+        }
+        sb.append("\n");
+        int i=0;
+        for(G vertice:listaDeVertices){
+            sb.append(vertice.toString());
+            sb.append("[ ");
+            for(Boolean adyacencia:matrizDeAdyacencias.get(i)){
+                if(adyacencia){
+                    sb.append("1  ");
+                }else{
+                    sb.append("0  ");
+                }
+            }
+            i++;
+            sb.append("\b]\n");
+        }
+        return sb.append("}\n").toString();
     }
 
 }
